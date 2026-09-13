@@ -43,6 +43,39 @@
       }
     </script>
 
+    <!--Parse HanZi-->
+
+    <script>
+      (function () {
+        // 等待 Docsify 完成挂载
+        window.addEventListener('load', function () {
+        // 使用 MutationObserver 监听搜索结果的动态插入
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            mutation.addedNodes.forEach(function (node) {
+              // 找到搜索结果中的标题元素（通常是 a 标签或 h2）
+              var titleEl = node.querySelector && node.querySelector('.search-result-title, h2, a');
+              if (titleEl) {
+                var text = titleEl.textContent || '';
+                // 检测是否包含百分号编码
+                if (/%[0-9A-Fa-f]{2}/.test(text)) {
+                  try {
+                    // 解码并替换显示文本
+                    titleEl.textContent = decodeURIComponent(text);
+                  } catch (e) {
+                  // 解码失败则忽略
+                  }
+                }
+              }
+            });
+          });
+        });
+        // 监听整个 body 的变化，确保捕获搜索结果的动态插入
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    })();
+    </script>
+
     <!-- Docsify.js -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
     <!-- Plugins (optional) -->
